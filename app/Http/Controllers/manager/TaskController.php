@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\manager;
 
+use App\Models\tasks;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
@@ -14,7 +15,8 @@ class TaskController extends Controller
      */
     public function index()
     {
-        return view('manager.tasks');
+        $tasks = tasks::query()->get();
+        return view('manager.task.tasks', compact('tasks'));
     }
 
     /**

@@ -10,9 +10,9 @@ let project = {
             html = '<label for="level" class="col-md-4 col-form-label text-md-right">Level</label>\n' +
                     '<div class="col-md-6">\n' +
                         '<select id="level" class="form-control" name="level">\n' +
-                            '<option value="manager" class="levelType">Junior</option>\n' +
-                            '<option value="manager" class="levelType">Middle</option>\n' +
-                            '<option value="developer" class="levelType">Senior</option>\n' +
+                            '<option value="junior" class="levelType">Junior</option>\n' +
+                            '<option value="middle" class="levelType">Middle</option>\n' +
+                            '<option value="senior" class="levelType">Senior</option>\n' +
                         '</select>\n' +
                     '</div>';
 
