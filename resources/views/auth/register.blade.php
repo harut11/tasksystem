@@ -1,4 +1,5 @@
-@extends('layouts.app')
+@extends('layouts.main')
+@include('layouts.navbar')
 
 @section('content')
 <div class="container">
@@ -12,7 +13,27 @@
                         @csrf
 
                         <div class="form-group row">
-                            <label for="name" class="col-md-4 col-form-label text-md-right">{{ __('Name') }}</label>
+                            <label for="role" class="col-md-4 col-form-label text-md-right">{{ __('Role') }}</label>
+
+                            <div class="col-md-6">
+                                <select id="role" class="form-control" name="role">
+                                    <option label="Choose variant" hidden>Choose Your Role</option>
+                                    <option value="manager" class="roleType">Manager</option>
+                                    <option value="developer" class="roleType">Developer</option>
+                                </select>
+
+                                @if ($errors->has('role'))
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $errors->first('role') }}</strong>
+                                    </span>
+                                @endif
+                            </div>
+                        </div>
+
+                        <div class="form-group row d-none" id="levelSelect"></div>
+
+                        <div class="form-group row">
+                            <label for="first_name" class="col-md-4 col-form-label text-md-right">{{ __('Firs Name') }}</label>
 
                             <div class="col-md-6">
                                 <input id="name" type="text" class="form-control{{ $errors->has('name') ? ' is-invalid' : '' }}" name="name" value="{{ old('name') }}" required autofocus>
