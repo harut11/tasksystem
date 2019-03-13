@@ -22,6 +22,7 @@ class CreateTasksTable extends Migration
             $table->string('status')->default('created');
             $table->integer('manager_id')->unsigned();
             $table->integer('developer_id')->nullable()->unsigned();
+            $table->string('developer_name')->nullable();
             $table->timestamps();
 
             $table->foreign('manager_id')->references('id')

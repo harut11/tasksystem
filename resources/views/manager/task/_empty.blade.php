@@ -6,5 +6,6 @@
 @endsection
 
 @section('content')
-    <h3>No tasks yet</h3>
+    <a class="btn btn-light" href="{{ route('create') }}">Create<i class="fas fa-plus-circle ml-2"></i></a>
+    <h3 class="mt-3">No tasks yet</h3>
 @endsection

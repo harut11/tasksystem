@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\manager;
 
+use Illuminate\Support\Facades\Auth;
 use App\Models\tasks;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -26,7 +27,7 @@ class TaskController extends Controller
      */
     public function create()
     {
-        //
+        return view('manager.task.create');
     }
 
     /**
@@ -37,7 +38,26 @@ class TaskController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+           'name' => 'required|min:5|max:255',
+            'description' => 'min:10',
+            'deadline' => 'required',
+            'status' => 'string',
+            'developer_name' => 'string',
+            'developer_id' => 'integer'
+        ]);
+
+        tasks::create([
+            'name' => $request['name'],
+            'description' => $request['description'],
+            'deadline' => $request['deadline'],
+            'status' => $request['status'],
+            'manager_id' => Auth::user()->id,
+            'developer_name' => $request['developer_name'],
+            'developer_id' => $request['developer_id']
+        ]);
+
+        return redirect(route('tasks'));
     }
 
     /**

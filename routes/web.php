@@ -17,8 +17,11 @@ Route::get('/', 'HomeController@index')->name('home');
 
 Route::group(['namespace' => 'manager'], function () {
    Route::get('tasks', 'TaskController@index')->name('index');
+   Route::get('create', 'TaskController@create')->name('create');
+   Route::post('store', 'TaskController@store')->name('store');
 });
 
 Route::get('/home', 'HomeController@index')->name('home');
+Route::get('/searchuser', 'AutocompleteController@searchuser')->name('searchuser');
 
 Auth::routes();

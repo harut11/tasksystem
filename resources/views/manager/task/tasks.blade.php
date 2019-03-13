@@ -2,18 +2,21 @@
 @include('layouts.navbar')
 
 @section('content')
-<table class="table w-75 mx-auto">
-    <caption>List of users</caption>
-    <thead>
-    <tr>
-        <th scope="col">#</th>
-        <th scope="col">First</th>
-        <th scope="col">Last</th>
-        <th scope="col">Handle</th>
-    </tr>
-    </thead>
-    <tbody>
-    @each('manager.task._task', $tasks, 'task', 'manager.task._empty')
-    </tbody>
-</table>
+    <a class="btn btn-light" href="{{ route('create') }}">Create<i class="fas fa-plus-circle ml-2"></i></a>
+    <table class="table mt-3">
+        <caption>List of tasks</caption>
+        <thead>
+        <tr>
+            <th scope="col">Name</th>
+            <th scope="col">Description</th>
+            <th scope="col">Status</th>
+            <th scope="col">Created At</th>
+            <th scope="col">Deadline</th>
+            <th scope="col">Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        @each('manager.task._task', $tasks, 'task', 'manager.task._empty')
+        </tbody>
+    </table>
 @endsection
