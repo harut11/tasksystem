@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\User;
 use Illuminate\Database\Eloquent\Model;
 
 class tasks extends Model
@@ -23,4 +24,9 @@ class tasks extends Model
     protected $hidden = [
 
     ];
+
+    public function developers(){
+        return $this->belongsToMany(User::class)
+            ->withPivot('assignpivot', 'user_id');
+    }
 }

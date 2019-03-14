@@ -18,20 +18,15 @@ class CreateTasksTable extends Migration
             $table->increments('id')->unsigned();
             $table->string('name');
             $table->text('description')->nullable();
-            $table->dateTime('deadline');
+            $table->timestamp('deadline');
             $table->string('status')->default('created');
             $table->integer('manager_id')->unsigned();
-            $table->integer('developer_id')->nullable()->unsigned();
-            $table->string('developer_name')->nullable();
             $table->timestamps();
 
             $table->foreign('manager_id')->references('id')
                 ->on('users')
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
-
-            $table->foreign('developer_id')->references('id')
-                ->on('users');
         });
     }
 

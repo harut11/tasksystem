@@ -3,7 +3,10 @@
 namespace App\Http\Controllers\manager;
 
 use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 use App\Models\tasks;
+use App\Models\assignpivot;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
@@ -16,7 +19,7 @@ class TaskController extends Controller
      */
     public function index()
     {
-        $tasks = tasks::query()->get();
+        $tasks = tasks::with('developers')->get();
         return view('manager.task.tasks', compact('tasks'));
     }
 
@@ -41,23 +44,35 @@ class TaskController extends Controller
         $request->validate([
            'name' => 'required|min:5|max:255',
             'description' => 'min:10',
-            'deadline' => 'required',
+            'deadline' => 'required|date_format:"Y/m/d h:i A"',
             'status' => 'string',
             'developer_name' => 'string',
             'developer_id' => 'integer'
         ]);
 
-        tasks::create([
+        $id = tasks::insertGetId([
             'name' => $request['name'],
             'description' => $request['description'],
-            'deadline' => $request['deadline'],
+            'deadline' => Carbon::parse($request['deadline']),
             'status' => $request['status'],
-            'manager_id' => Auth::user()->id,
-            'developer_name' => $request['developer_name'],
-            'developer_id' => $request['developer_id']
+            'manager_id' => Auth::user()->id
         ]);
 
-        return redirect(route('tasks'));
+        $devs_id = explode(',', $request['developer_id']);
+        $records = [];
+
+        foreach ($devs_id as $dev_id) {
+            $record = [
+                'user_id' => $dev_id,
+                'task_id' => $id
+            ];
+
+            $records[] = $record;
+        }
+
+        assignpivot::insert($records);
+
+        return redirect()->route('manager.task.index');
     }
 
     /**
@@ -68,7 +83,13 @@ class TaskController extends Controller
      */
     public function show($id)
     {
-        //
+        $task = DB::table('tasks')
+            ->where('tasks.id', '=', $id)
+            ->leftJoin('users', 'tasks.developer_id', '=', 'users.id')
+            ->select('tasks.*', 'users.first_name')
+            ->first();
+
+        return view('manager.task.show', compact('task'));
     }
 
     /**
@@ -79,7 +100,8 @@ class TaskController extends Controller
      */
     public function edit($id)
     {
-        //
+        $task = tasks::findOrFail($id);
+        return view('manager.task.edit', compact('task'));
     }
 
     /**
@@ -91,7 +113,35 @@ class TaskController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $request->validate([
+            'name' => 'required|min:5|max:255',
+            'description' => 'min:10',
+            'deadline' => 'required|date_format:"Y/m/d h:i A"',
+            'status' => 'string',
+            'developer_name' => 'string',
+            'developer_id' => 'integer'
+        ]);
+
+        if (isset($request['developer_name'])) {
+            tasks::findOrFail($id)->update([
+                'name' => $request['name'],
+                'description' => $request['description'],
+                'deadline' => Carbon::parse($request['deadline']),
+                'status' => $request['status'],
+                'developer_name' => $request['developer_name'],
+                'developer_id' => $request['developer_id'],
+                'updated_at' => Carbon::now()
+            ]);
+        } else {
+            tasks::findOrFail($id)->update([
+                'name' => $request['name'],
+                'description' => $request['description'],
+                'deadline' => Carbon::parse($request['deadline']),
+                'status' => $request['status'],
+                'updated_at' => Carbon::now()
+            ]);
+        }
+        return redirect()->route('manager.task.index');
     }
 
     /**
@@ -102,6 +152,8 @@ class TaskController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $task = tasks::findOrFail($id);
+        $task->delete();
+        return redirect()->route('manager.task.index');
     }
 }

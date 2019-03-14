@@ -8,7 +8,7 @@
         <ul class="navbar-nav mr-auto">
             {{--@auth--}}
             <li class="nav-item">
-                <a class="nav-link" href="/tasks">Tasks</a>
+                <a class="nav-link" href="{{ route('manager.task.index') }}">Tasks</a>
             </li>
             {{--@endauth--}}
         </ul>

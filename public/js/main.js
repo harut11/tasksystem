@@ -32,7 +32,7 @@ let project = {
             html = '<label for="developer_name" class="col-md-4 col-form-label text-md-right">Developer Name</label>\n' +
                 '\n' +
                 '<div class="col-md-6">\n' +
-                '<input type="text" id="developer_name" class="position-relative form-control" name="developer_name">' +
+                '<input type="text" id="developer_name" class="position-relative form-control" name="developer_name" autocomplete="off">' +
                 '<input type="hidden" name="developer_id" id="developer_id">\n' +
                 '<div class="form-group position-absolute" id="searchSection">\n' +
                 '<select multiple class="form-control d-none" id="searchResult"></select>\n' +
@@ -55,20 +55,37 @@ let project = {
                     let users = JSON.parse(response)['users'],
                         searchResult = document.getElementById('searchResult');
 
-                    if (users.length !== 0) {
-                        $.each(users, (key, value) => {
-                            let html = '<option value="'+value.first_name+'" class="userOption" data-id="'+value.id+'">'+ value.first_name + ' (' + value.email + ')' +'</option>';
-                            searchResult.classList.remove('d-none');
-                            searchResult.innerHTML = html;
-                        });
-                    } else {
-                        $('.assigned').attr('disabled', true);
-                        $('#status').val('created');
-                        project.devName.empty();
-                    }
+                    $.each(users, (key, value) => {
+                        let html = '<option value="'+value.first_name+'" class="userOption" data-id="'+value.id+'">'+ value.first_name + ' (' + value.email + ')' +'</option>';
+                        searchResult.classList.remove('d-none');
+                        searchResult.innerHTML = html;
+                    });
                 }
             }
         })
+    },
+
+    deadlinePicker: () => {
+        let dateTimes = $('input[name="deadline"]');
+
+        dateTimes.daterangepicker({
+            timePicker: true,
+            singleDatePicker: true,
+            showDropdowns: true,
+            minDate: '01/01/2019',
+            startDate: '01/05/2019',
+            maxDate: '12/31/2030',
+            autoUpdateInput: false,
+            opens: 'center',
+        });
+
+        dateTimes.on('apply.daterangepicker', function(ev, picker) {
+            $(this).val(picker.endDate.format('YYYY/MM/DD hh:mm A'));
+        });
+
+        dateTimes.on('cancel.daterangepicker', function() {
+            $(this).val('');
+        });
     }
 };
 
@@ -92,6 +109,12 @@ $(document).on('click', '.userOption', (event) => {
     document.getElementById('developer_id').value = $(event.target).attr('data-id');
 });
 
-// $('body').on('click', () => {
-//     document.getElementById('searchResult').classList.add('d-none');
-// });
+$('body').on('click', () => {
+    let searchResult = document.getElementById('searchResult');
+
+    if (searchResult) {
+     searchResult.classList.add('d-none');
+    }
+});
+
+project.deadlinePicker();
