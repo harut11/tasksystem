@@ -16,7 +16,7 @@
 Route::get('/', 'HomeController@index')->name('home');
 
 Route::group(['namespace' => 'manager'], function () {
-   Route::get('tasks', 'TaskController@index')->name('index');
+   Route::get('tasks', 'TaskController@index')->name('index')->middleware('manager');
    Route::get('create', 'TaskController@create')->name('create');
    Route::post('store', 'TaskController@store')->name('store');
 });

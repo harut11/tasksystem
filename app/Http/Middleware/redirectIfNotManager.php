@@ -16,8 +16,8 @@ class redirectIfNotManager
      */
     public function handle($request, Closure $next)
     {
-        if (!Auth::check() && Auth::user()->role !== 'manager') {
-            return redirect()->route('/');
+        if (!Auth::check() || Auth::user()->role !== 'manager') {
+            return redirect()->route('home');
         }
         return $next($request);
     }
