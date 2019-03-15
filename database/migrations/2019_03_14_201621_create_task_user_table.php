@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateAssignpivotTable extends Migration
+class CreateTaskUserTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,9 @@ class CreateAssignpivotTable extends Migration
      */
     public function up()
     {
-        Schema::create('assignpivot', function (Blueprint $table) {
-            $table->integer('user_id');
+        Schema::create('task_user', function (Blueprint $table) {
             $table->integer('task_id');
+            $table->integer('user_id');
         });
     }
 
@@ -26,6 +26,6 @@ class CreateAssignpivotTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('assignpivot');
+        Schema::dropIfExists('task_user');
     }
 }

@@ -38,8 +38,8 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    public function tasks(){
-        return $this->belongsToMany(tasks::class)
-            ->withPivot('assignpivot', 'task_id');
+    public function tasks()
+    {
+        return $this->belongsToMany('App\Models\tasks', 'task_user', 'user_id', 'task_id');
     }
 }

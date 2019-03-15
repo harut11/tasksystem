@@ -5,8 +5,7 @@ namespace App\Http\Controllers\manager;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use App\Models\tasks;
-use App\Models\assignpivot;
-use Illuminate\Support\Facades\DB;
+use App\Models\task_user;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
@@ -19,7 +18,7 @@ class TaskController extends Controller
      */
     public function index()
     {
-        $tasks = tasks::with('developers')->get();
+        $tasks = tasks::query()->with('users')->get();
         return view('manager.task.tasks', compact('tasks'));
     }
 
@@ -63,14 +62,14 @@ class TaskController extends Controller
 
         foreach ($devs_id as $dev_id) {
             $record = [
-                'user_id' => $dev_id,
-                'task_id' => $id
+                'task_id' => $id,
+                'user_id' => $dev_id
             ];
 
             $records[] = $record;
         }
 
-        assignpivot::insert($records);
+        task_user::insert($records);
 
         return redirect()->route('manager.task.index');
     }
@@ -83,11 +82,7 @@ class TaskController extends Controller
      */
     public function show($id)
     {
-        $task = DB::table('tasks')
-            ->where('tasks.id', '=', $id)
-            ->leftJoin('users', 'tasks.developer_id', '=', 'users.id')
-            ->select('tasks.*', 'users.first_name')
-            ->first();
+        $task = tasks::findOrFail($id)->with('users')->first();
 
         return view('manager.task.show', compact('task'));
     }

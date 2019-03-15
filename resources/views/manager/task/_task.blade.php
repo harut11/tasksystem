@@ -2,7 +2,11 @@
     <td>{{ $task->name }}</td>
     <td>{{ str_limit($task->description, 10) }}</td>
     <td>{{ $task->status }}</td>
-    <td>{{ $task->first_name ? $task->first_name : 'No assigned' }}</td>
+    <td>
+        @foreach($task->users as $user)
+            {{ $user ? $user->first_name . ', ' : 'No assigned' }}
+        @endforeach
+    </td>
     <td>{{ $task->deadline }}</td>
     <td>
         <a class="btn btn-secondary ml-2" href="{{ route('manager.task.edit', $task->id) }}">

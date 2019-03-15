@@ -8,7 +8,10 @@
 @section('content')
     <div class="card w-50 mx-auto">
         <div class="card-header">
-            Developer(s) Name: {{ $task->first_name ? $task->first_name : 'No Assigned'}}
+            Developer(s) Name:
+            @foreach($task->users as $user)
+                {{ $user ? $user->first_name . ', ' : 'No assigned' }}
+            @endforeach
         </div>
         <div class="card-body">
             <h5 class="card-title">Task Name: {{ $task->name }}</h5>

@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\User;
 use Illuminate\Database\Eloquent\Model;
 
 class tasks extends Model
@@ -25,8 +24,8 @@ class tasks extends Model
 
     ];
 
-    public function developers(){
-        return $this->belongsToMany(User::class)
-            ->withPivot('assignpivot', 'user_id');
+    public function users()
+    {
+        return $this->belongsToMany('App\User', 'task_user', 'task_id', 'user_id');
     }
 }
