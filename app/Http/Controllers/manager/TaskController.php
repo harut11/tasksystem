@@ -45,8 +45,7 @@ class TaskController extends Controller
             'description' => 'min:10',
             'deadline' => 'required|date_format:"Y/m/d h:i A"',
             'status' => 'string',
-            'developer_name' => 'string',
-            'developer_id' => 'integer'
+            'developer_id' => 'string'
         ]);
 
         $id = tasks::insertGetId([
@@ -57,19 +56,9 @@ class TaskController extends Controller
             'manager_id' => Auth::user()->id
         ]);
 
-        $devs_id = explode(',', $request['developer_id']);
-        $records = [];
-
-        foreach ($devs_id as $dev_id) {
-            $record = [
-                'task_id' => $id,
-                'user_id' => $dev_id
-            ];
-
-            $records[] = $record;
+        if (isset($request['developer_id'])) {
+            $this->changePivot('insert', $id, $request);
         }
-
-        task_user::insert($records);
 
         return redirect()->route('manager.task.index');
     }
@@ -82,7 +71,8 @@ class TaskController extends Controller
      */
     public function show($id)
     {
-        $task = tasks::findOrFail($id)->with('users')->first();
+        $task = tasks::query()->where('id', $id)->with('users')
+            ->first();
 
         return view('manager.task.show', compact('task'));
     }
@@ -95,7 +85,7 @@ class TaskController extends Controller
      */
     public function edit($id)
     {
-        $task = tasks::findOrFail($id);
+        $task = tasks::query()->where('id', $id)->with('users')->first();
         return view('manager.task.edit', compact('task'));
     }
 
@@ -113,29 +103,21 @@ class TaskController extends Controller
             'description' => 'min:10',
             'deadline' => 'required|date_format:"Y/m/d h:i A"',
             'status' => 'string',
-            'developer_name' => 'string',
-            'developer_id' => 'integer'
+            'developer_id' => 'string'
         ]);
 
-        if (isset($request['developer_name'])) {
-            tasks::findOrFail($id)->update([
-                'name' => $request['name'],
-                'description' => $request['description'],
-                'deadline' => Carbon::parse($request['deadline']),
-                'status' => $request['status'],
-                'developer_name' => $request['developer_name'],
-                'developer_id' => $request['developer_id'],
-                'updated_at' => Carbon::now()
-            ]);
-        } else {
-            tasks::findOrFail($id)->update([
-                'name' => $request['name'],
-                'description' => $request['description'],
-                'deadline' => Carbon::parse($request['deadline']),
-                'status' => $request['status'],
-                'updated_at' => Carbon::now()
-            ]);
+        tasks::findOrFail($id)->update([
+            'name' => $request['name'],
+            'description' => $request['description'],
+            'deadline' => Carbon::parse($request['deadline']),
+            'status' => $request['status'],
+            'updated_at' => Carbon::now()
+        ]);
+
+        if (isset($request['developer_id'])) {
+            $this->changePivot('insert', $id, $request);
         }
+
         return redirect()->route('manager.task.index');
     }
 
@@ -150,5 +132,21 @@ class TaskController extends Controller
         $task = tasks::findOrFail($id);
         $task->delete();
         return redirect()->route('manager.task.index');
+    }
+
+    public function changePivot($action, $id, $request) {
+        $devs_id = explode(',', $request['developer_id']);
+        $records = [];
+
+        foreach ($devs_id as $dev_id) {
+            $record = [
+                'task_id' => $id,
+                'user_id' => $dev_id
+            ];
+
+            $records[] = $record;
+        }
+
+        task_user::$action($records);
     }
 }

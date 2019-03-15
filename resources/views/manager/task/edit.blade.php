@@ -60,10 +60,10 @@
                             </div>
 
                             <div class="form-group row">
-                                <label for="status" class="col-md-4 col-form-label text-md-right">{{ __('Status') }}</label>
+                                <label for="status2" class="col-md-4 col-form-label text-md-right">{{ __('Status') }}</label>
 
                                 <div class="col-md-6">
-                                    <select id="status" class="form-control" name="status">
+                                    <select id="status2" class="form-control status" name="status">
                                         <option value="created" class="taskStatus" {{ $task->status === 'created' ? 'selected' : ''}}>Created</option>
                                         <option value="assigned" class="taskStatus assigned" {{ $task->status === 'assigned' ? 'selected' : ''}}>Assigned</option>
                                         <option value="inprogress" class="taskStatus" {{ $task->status === 'inprogress' ? 'selected' : ''}}>In Progress</option>
@@ -78,12 +78,23 @@
                                 </div>
                             </div>
 
+                            <div class="form-group row developerName">
+                                @if ($errors->has('developer_name'))
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $errors->first('developer_name') }}</strong>
+                                    </span>
+                                @endif
+                            </div>
+
                             @if ($task->status === 'assigned')
-                                <div class="form-group row">
+                                <div class="form-group row" id="staticDev">
                                     <label for="developer_name" class="col-md-4 col-form-label text-md-right">Developer Name</label>
                                     <div class="col-md-6">
-                                        <input type="text" id="developer_name" class="position-relative form-control" name="developer_name" autocomplete="off">
-                                        <input type="hidden" name="developer_id" id="developer_id">
+                                        <input type="text" id="developer_name" class="position-relative form-control"
+                                               name="developer_name" autocomplete="off"
+                                               value="@foreach($task->users as $user) {{ $user ? $user->first_name  : '' }} @endforeach">
+                                        <input type="hidden" name="developer_id" id="developer_id"
+                                               value="@foreach($task->users as $user){{$user ? $user->id . ',' : '' }}@endforeach">
                                         <div class="form-group position-absolute" id="searchSection">
                                             <select multiple class="form-control d-none" id="searchResult"></select>
                                         </div>

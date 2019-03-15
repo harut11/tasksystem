@@ -60,10 +60,10 @@
                             </div>
 
                             <div class="form-group row">
-                                <label for="status" class="col-md-4 col-form-label text-md-right">{{ __('Status') }}</label>
+                                <label for="status1" class="col-md-4 col-form-label text-md-right">{{ __('Status') }}</label>
 
                                 <div class="col-md-6">
-                                    <select id="status" class="form-control" name="status">
+                                    <select id="status1" class="form-control status" name="status">
                                         <option value="created" class="taskStatus">Created</option>
                                         <option value="assigned" class="taskStatus assigned">Assigned</option>
                                         <option value="inprogress" class="taskStatus">In Progress</option>
@@ -78,7 +78,7 @@
                                 </div>
                             </div>
 
-                            <div class="form-group row" id="developerName">
+                            <div class="form-group row developerName">
                                 @if ($errors->has('developer_name'))
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $errors->first('developer_name') }}</strong>

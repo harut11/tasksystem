@@ -14,8 +14,18 @@ class CreateTaskUserTable extends Migration
     public function up()
     {
         Schema::create('task_user', function (Blueprint $table) {
-            $table->integer('task_id');
-            $table->integer('user_id');
+            $table->integer('task_id')->unsigned();
+            $table->integer('user_id')->unsigned();
+
+            $table->foreign('task_id')->references('id')
+                ->on('tasks')
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
+
+            $table->foreign('user_id')->references('id')
+                ->on('users')
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
         });
     }
 
@@ -26,6 +36,7 @@ class CreateTaskUserTable extends Migration
      */
     public function down()
     {
+        Schema::disableForeignKeyConstraints();
         Schema::dropIfExists('task_user');
     }
 }

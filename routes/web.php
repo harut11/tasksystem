@@ -12,7 +12,6 @@
 */
 
 
-
 Route::get('/', 'HomeController@index')->name('home');
 
 Route::group(['middleware' => 'manager', 'namespace' => 'manager', 'prefix' => 'manager', 'as' => 'manager.'], function () {
@@ -23,6 +22,15 @@ Route::group(['middleware' => 'manager', 'namespace' => 'manager', 'prefix' => '
         Route::get('edit/{id}', 'TaskController@edit')->name('edit');
         Route::post('update/{id}', 'TaskController@update')->name('update');
         Route::post('{id}', 'TaskController@destroy')->name('delete');
+        Route::get('show/{id}', 'TaskController@show')->name('show');
+    });
+});
+
+Route::group(['middleware' => 'developer', 'namespace' => 'developer', 'prefix' => 'developer', 'as' => 'developer.'], function () {
+    Route::group(['prefix' => 'task', 'as' => 'task.'], function () {
+        Route::get('/', 'TaskController@index')->name('index');
+//        Route::get('edit/{id}', 'TaskController@edit')->name('edit');
+//        Route::post('update/{id}', 'TaskController@update')->name('update');
         Route::get('show/{id}', 'TaskController@show')->name('show');
     });
 });
