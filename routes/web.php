@@ -29,8 +29,8 @@ Route::group(['middleware' => 'manager', 'namespace' => 'manager', 'prefix' => '
 Route::group(['middleware' => 'developer', 'namespace' => 'developer', 'prefix' => 'developer', 'as' => 'developer.'], function () {
     Route::group(['prefix' => 'task', 'as' => 'task.'], function () {
         Route::get('/', 'TaskController@index')->name('index');
-//        Route::get('edit/{id}', 'TaskController@edit')->name('edit');
-//        Route::post('update/{id}', 'TaskController@update')->name('update');
+        Route::get('edit/{id}', 'TaskController@edit')->name('edit');
+        Route::post('update/{id}', 'TaskController@update')->name('update');
         Route::get('show/{id}', 'TaskController@show')->name('show');
     });
 });

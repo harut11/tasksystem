@@ -78,23 +78,19 @@
                                 </div>
                             </div>
 
-                            <div class="form-group row developerName">
-                                @if ($errors->has('developer_name'))
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $errors->first('developer_name') }}</strong>
-                                    </span>
-                                @endif
-                            </div>
+                            <div class="form-group row developerName"></div>
 
                             @if ($task->status === 'assigned')
                                 <div class="form-group row" id="staticDev">
-                                    <label for="developer_name" class="col-md-4 col-form-label text-md-right">Developer Name</label>
+                                    <label for="developer_name" class="col-md-4 col-form-label text-md-right">Search Developer</label>
                                     <div class="col-md-6">
                                         <input type="text" id="developer_name" class="position-relative form-control"
-                                               name="developer_name" autocomplete="off"
-                                               value="@foreach($task->users as $user) {{ $user ? $user->first_name  : '' }} @endforeach">
+                                               name="developer_name" autocomplete="off">
+                                        @foreach($task->users as $user)
+                                            @php $user ? $u[] = $user->id : '' @endphp
+                                        @endforeach
                                         <input type="hidden" name="developer_id" id="developer_id"
-                                               value="@foreach($task->users as $user){{$user ? $user->id . ',' : '' }}@endforeach">
+                                               value="{{ implode(',', $u) }}">
                                         <div class="form-group position-absolute" id="searchSection">
                                             <select multiple class="form-control d-none" id="searchResult"></select>
                                         </div>

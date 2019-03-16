@@ -78,13 +78,7 @@
                                 </div>
                             </div>
 
-                            <div class="form-group row developerName">
-                                @if ($errors->has('developer_name'))
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $errors->first('developer_name') }}</strong>
-                                    </span>
-                                @endif
-                            </div>
+                            <div class="form-group row developerName"></div>
 
                             <div class="form-group row mb-0">
                                 <div class="col-md-6 offset-md-4">

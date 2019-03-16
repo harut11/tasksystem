@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\manager;
 
-use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use App\Models\tasks;
 use App\Models\task_user;
@@ -44,16 +43,23 @@ class TaskController extends Controller
            'name' => 'required|min:5|max:255',
             'description' => 'min:10',
             'deadline' => 'required|date_format:"Y/m/d h:i A"',
-            'status' => 'string',
-            'developer_id' => 'string'
+            'status' => 'string'
         ]);
+
+        if (isset($request['developer_id'])) {
+            $request->validate([
+                'developer_id' => 'required|string'
+            ]);
+        }
 
         $id = tasks::insertGetId([
             'name' => $request['name'],
             'description' => $request['description'],
             'deadline' => Carbon::parse($request['deadline']),
             'status' => $request['status'],
-            'manager_id' => Auth::user()->id
+            'manager_id' => auth()->id(),
+            'created_at' => Carbon::now(),
+            'updated_at' => Carbon::now()
         ]);
 
         if (isset($request['developer_id'])) {
@@ -115,6 +121,7 @@ class TaskController extends Controller
         ]);
 
         if (isset($request['developer_id'])) {
+            task_user::query()->where('task_id', $id)->delete();
             $this->changePivot('insert', $id, $request);
         }
 

@@ -1,12 +1,15 @@
-<tr class="{{ strtotime('1 day ago') < strtotime($task->deadline) ? 'text-danger' : '' }}">
+<tr class="{{ strtotime('1 day ago') > strtotime($task->deadline) ? 'text-danger' : '' }}">
     <td>{{ $task->name }}</td>
     <td>{{ str_limit($task->description, 10) }}</td>
     <td>{{ $task->status }}</td>
     <td>
-        @if(sizeof($task->users) !== 0)
+        @if(count($task->users))
             @foreach($task->users as $user)
-                {{ $user->first_name . ', ' }}
+                @php
+                $u[] = $user->first_name;
+                @endphp
             @endforeach
+                {{ implode(', ', $u) }}
         @else
             No assigned
         @endif
@@ -20,6 +23,8 @@
             @csrf
             <button type="submit" class="btn btn-secondary"><i class="far fa-trash-alt"></i></button>
         </form>
-        <a class="btn btn-secondary" href="{{ route('manager.task.show', $task->id) }}"><i class="fas fa-eye"></i></a>
+        <a class="btn btn-secondary" href="{{ route('manager.task.show', $task->id) }}">
+            <i class="fas fa-eye"></i>
+        </a>
     </td>
 </tr>

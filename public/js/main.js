@@ -27,16 +27,15 @@ let project = {
     },
 
     statusChange: (event) => {
-        let arr = ['1', '2', '3'],
-            selectMode = $(event.target).val(),
+        let selectMode = $(event.target).val(),
             html = '';
 
         if (selectMode === 'assigned') {
-            html = '<label for="developer_name" class="col-md-4 col-form-label text-md-right">Developer Name</label>\n' +
+            html = '<label for="developer_name" class="col-md-4 col-form-label text-md-right">Shearch Developer</label>\n' +
                 '\n' +
                 '<div class="col-md-6">\n' +
                 '<input type="text" id="developer_name" class="position-relative form-control" ' +
-                'name="developer_name[]" autocomplete="off" value="">' +
+                'name="developer_name" autocomplete="off">' +
                 '<div class="row mt-3" id="developers"></div>' +
                 '<input type="hidden" name="developer_id" id="developer_id" value="">\n' +
                 '<div class="form-group position-absolute" id="searchSection">\n' +
@@ -66,10 +65,11 @@ let project = {
             success: (response) => {
                 if (response) {
                     let users = JSON.parse(response)['users'],
-                        searchResult = document.getElementById('searchResult');
+                        searchResult = document.getElementById('searchResult'),
+                        html = '';
 
                     $.each(users, (key, value) => {
-                        let html = '<option value="'+value.first_name+'" class="userOption" ' +
+                        html += '<option value="'+value.first_name+'" class="userOption" ' +
                             'data-id="'+value.id+'">'+ value.first_name + ' (' + value.email + ')' +'</option>';
                         searchResult.classList.remove('d-none');
                         searchResult.innerHTML = html;
