@@ -8,7 +8,11 @@
         <ul class="navbar-nav mr-auto">
             {{--@auth--}}
             <li class="nav-item">
-                <a class="nav-link" href="{{ route('manager.task.index') }}">Tasks</a>
+                @if(Auth::check() && Auth::user()->role === 'manager')
+                    <a class="nav-link" href="{{ route('manager.task.index') }}">Tasks</a>
+                @elseif(Auth::check() && Auth::user()->role === 'developer')
+                    <a class="nav-link" href="{{ route('developer.task.index') }}">Tasks</a>
+                @endif
             </li>
             {{--@endauth--}}
         </ul>
