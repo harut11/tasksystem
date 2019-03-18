@@ -23,6 +23,9 @@
         <div class="card-body">
             <h5 class="card-title">Task Name: {{ $task->name }}</h5>
             <p class="card-text">Task Description: {{ $task->description }}</p>
+            <p class="card-text">Created At: {{ $task->created_at }}</p>
+            <p class="card-text">Deadline: {{ $task->deadline }}</p>
+            <p class="card-text">Status: {{ $task->status }}</p>
         </div>
     </div>
 @endsection

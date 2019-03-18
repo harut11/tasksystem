@@ -10,9 +10,17 @@ a {
 }
 /* Helpers End */
 
+/* Task Section Start */
 #searchSection {
   left: 0;
   right: 0;
   z-index: 1000!important;
 }
+
+.deleteDeveloper {
+  cursor: pointer;
+}
+/* Task Section End */
+
+
 

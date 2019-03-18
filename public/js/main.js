@@ -28,32 +28,33 @@ let project = {
 
     statusChange: (event) => {
         let selectMode = $(event.target).val(),
+            dev_id = $('.devs'),
             html = '';
 
-        if (selectMode === 'assigned') {
+        if (selectMode === 'assigned' && !project.staticDevName.length) {
             html = '<label for="developer_name" class="col-md-4 col-form-label text-md-right">Shearch Developer</label>\n' +
                 '\n' +
                 '<div class="col-md-6">\n' +
                 '<input type="text" id="developer_name" class="position-relative form-control" ' +
                 'name="developer_name" autocomplete="off">' +
                 '<div class="row mt-3" id="developers"></div>' +
-                '<input type="hidden" name="developer_id" id="developer_id" value="">\n' +
+                '<div id="developers_id"></div>\n' +
                 '<div class="form-group position-absolute" id="searchSection">\n' +
                 '<select multiple class="form-control d-none" id="searchResult"></select>\n' +
                 '</div>\n' +
                 '</div>';
 
-            if (project.staticDevName) {
-                project.staticDevName.remove();
-            }
 
             project.devName.append(html);
-        } else {
-            if (project.staticDevName) {
-                project.staticDevName.remove();
-            }
-
+        } else if(selectMode === 'assigned' && project.staticDevName.length) {
+            project.staticDevName.removeClass('d-none');
+            dev_id.attr('name', 'developers[]');
+        } else if(selectMode !== 'assigned' && project.staticDevName.length) {
+            project.staticDevName.addClass('d-none');
+            dev_id.removeAttr('name');
+        } else if(selectMode !== 'assigned' && !project.staticDevName.length) {
             project.devName.empty();
+            project.developers = [];
         }
     },
 
@@ -86,8 +87,8 @@ let project = {
             timePicker: true,
             singleDatePicker: true,
             showDropdowns: true,
-            minDate: '01/01/2019',
-            startDate: '01/05/2019',
+            minDate: moment().startOf('hour'),
+            startDate: moment().startOf('hour'),
             maxDate: '12/31/2030',
             autoUpdateInput: false,
             opens: 'center',
@@ -100,6 +101,60 @@ let project = {
         dateTimes.on('cancel.daterangepicker', function() {
             $(this).val('');
         });
+    },
+
+    initDevelopers: (event) => {
+        let div = document.getElementById('developers_id'),
+            developers = document.getElementById('developers'),
+            id = $(event.target).attr('data-id'),
+            html = '',
+            done = () => {
+                project.developers.push(id);
+
+                for (let i = 0; i < project.developers.length; i++) {
+                    html += '<input type="hidden" class="devs" name="developers[]" value="'+ project.developers[i] +'">';
+                }
+                div.innerHTML = html;
+
+                html = '<div class="ml-3 item" data-id="' + id + '">' + $(event.target).val() +
+                    '<i class="fas fa-times ml-2 deleteDeveloper"></i></div>';
+
+                developers.innerHTML += html;
+            };
+
+        if (project.developers.length > 0) {
+            if (jQuery.inArray(id, project.developers) === -1){
+                done();
+            } else {
+                return false;
+            }
+        } else {
+            done();
+        }
+    },
+
+    deleteDevelopers: (developer) => {
+        let id = developer.attr('data-id');
+
+        project.developers.splice($.inArray(id, project.developers), 1);
+
+        $.each($('.devs'), (key, value) => {
+            if ($(value).val() === id) {
+                value.remove();
+            }
+        });
+
+        developer.remove();
+    },
+
+    getDevelopers: () => {
+        let devs = $('.devs');
+
+        if (devs) {
+            $.each(devs, (key, value) => {
+                project.developers.push($(value).val());
+            });
+        }
     }
 };
 
@@ -119,24 +174,14 @@ $(document).on('keyup', '#developer_name', (event) => {
 
 $(document).on('click', '.userOption', (event) => {
     event.stopPropagation();
-
-    let html = '<p class="text-success ml-3">'+$(event.target).val()+'</p>';
-
-    if (project.developers.length > 0) {
-        if (jQuery.inArray($(event.target).attr('data-id'), project.developers) === -1){
-
-            project.developers.push($(event.target).attr('data-id'));
-            document.getElementById('developers').innerHTML += html;
-        } else {
-            return false;
-        }
-    } else {
-        project.developers.push($(event.target).attr('data-id'));
-        document.getElementById('developers').innerHTML += html;
-    }
+    project.initDevelopers(event);
 
     document.getElementById('developer_name').value = '';
-    document.getElementById('developer_id').value = project.developers;
+});
+
+$(document).on('click', '.deleteDeveloper', (event) => {
+    let developer = $(event.target).closest('.item');
+   project.deleteDevelopers(developer);
 });
 
 $('body').on('click', () => {
@@ -146,5 +191,7 @@ $('body').on('click', () => {
      searchResult.classList.add('d-none');
     }
 });
+
+project.getDevelopers();
 
 project.deadlinePicker();

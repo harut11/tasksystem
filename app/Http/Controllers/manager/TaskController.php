@@ -46,9 +46,9 @@ class TaskController extends Controller
             'status' => 'string'
         ]);
 
-        if (isset($request['developer_id'])) {
+        if (isset($request['developers'])) {
             $request->validate([
-                'developer_id' => 'required|string'
+                'developers' => 'required'
             ]);
         }
 
@@ -62,7 +62,7 @@ class TaskController extends Controller
             'updated_at' => Carbon::now()
         ]);
 
-        if (isset($request['developer_id'])) {
+        if (isset($request['developers']) && !empty($request['developers'])) {
             $this->changePivot('insert', $id, $request);
         }
 
@@ -91,7 +91,9 @@ class TaskController extends Controller
      */
     public function edit($id)
     {
-        $task = tasks::query()->where('id', $id)->with('users')->first();
+        $task = tasks::query()->where('id', $id)->with('users')
+            ->first();
+
         return view('manager.task.edit', compact('task'));
     }
 
@@ -108,11 +110,13 @@ class TaskController extends Controller
             'name' => 'required|min:5|max:255',
             'description' => 'min:10',
             'deadline' => 'required|date_format:"Y/m/d h:i A"',
-            'status' => 'string',
-            'developer_id' => 'string'
+            'status' => 'string'
         ]);
 
-        tasks::findOrFail($id)->update([
+        tasks::query()->where('id', $id)
+            ->where('status', '<>', 'inprogress')
+            ->where('status', '<>', 'done')
+            ->update([
             'name' => $request['name'],
             'description' => $request['description'],
             'deadline' => Carbon::parse($request['deadline']),
@@ -120,7 +124,7 @@ class TaskController extends Controller
             'updated_at' => Carbon::now()
         ]);
 
-        if (isset($request['developer_id'])) {
+        if (isset($request['developers']) && !empty($request['developers'])) {
             task_user::query()->where('task_id', $id)->delete();
             $this->changePivot('insert', $id, $request);
         }
@@ -142,13 +146,12 @@ class TaskController extends Controller
     }
 
     public function changePivot($action, $id, $request) {
-        $devs_id = explode(',', $request['developer_id']);
         $records = [];
 
-        foreach ($devs_id as $dev_id) {
+        foreach ($request['developers'] as $key => $value) {
             $record = [
                 'task_id' => $id,
-                'user_id' => $dev_id
+                'user_id' => $value
             ];
 
             $records[] = $record;

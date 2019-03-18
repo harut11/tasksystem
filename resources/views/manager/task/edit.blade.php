@@ -64,10 +64,16 @@
 
                                 <div class="col-md-6">
                                     <select id="status2" class="form-control status" name="status">
-                                        <option value="created" class="taskStatus" {{ $task->status === 'created' ? 'selected' : ''}}>Created</option>
-                                        <option value="assigned" class="taskStatus assigned" {{ $task->status === 'assigned' ? 'selected' : ''}}>Assigned</option>
-                                        <option value="inprogress" class="taskStatus" {{ $task->status === 'inprogress' ? 'selected' : ''}}>In Progress</option>
-                                        <option value="done" class="taskStatus" {{ $task->status === 'done' ? 'selected' : ''}}>Done</option>
+                                        @if($task->status === 'assigned' || $task->status === 'created')
+                                            <option value="created" class="taskStatus" {{ $task->status === 'created' ? 'selected' : ''}}>Created</option>
+                                            <option value="assigned" class="taskStatus assigned" {{ $task->status === 'assigned' ? 'selected' : ''}}>Assigned</option>
+                                            <option value="inprogress" class="taskStatus" {{ $task->status === 'inprogress' ? 'selected' : ''}}>In Progress</option>
+                                            <option value="done" class="taskStatus" {{ $task->status === 'done' ? 'selected' : ''}}>Done</option>
+                                        @elseif($task->status === 'inprogress' || $task->status === 'done')
+                                            <option value="created" class="taskStatus" {{ $task->status === 'created' ? 'selected' : ''}}>Created</option>
+                                            <option value="done" class="taskStatus" {{ $task->status === 'done' ? 'selected' : ''}}>Done</option>
+                                            <option value="inprogress" class="taskStatus" {{ $task->status === 'inprogress' ? 'selected' : ''}}>In Progress</option>
+                                        @endif
                                     </select>
 
                                     @if ($errors->has('status'))
@@ -80,23 +86,29 @@
 
                             <div class="form-group row developerName"></div>
 
-                            @if ($task->status === 'assigned')
-                                <div class="form-group row" id="staticDev">
+                                <div class="form-group row {{ $task->status === 'assigned' ? '' : 'd-none' }}" id="staticDev">
                                     <label for="developer_name" class="col-md-4 col-form-label text-md-right">Search Developer</label>
                                     <div class="col-md-6">
                                         <input type="text" id="developer_name" class="position-relative form-control"
                                                name="developer_name" autocomplete="off">
+                                        <div class="row mt-3" id="developers">
                                         @foreach($task->users as $user)
-                                            @php $user ? $u[] = $user->id : '' @endphp
+                                            <div class="ml-3 item" data-id="{{ $user->id }}">{{ $user->first_name }}
+                                                <i class="fas fa-times ml-2 deleteDeveloper"></i>
+                                            </div>
                                         @endforeach
-                                        <input type="hidden" name="developer_id" id="developer_id"
-                                               value="{{ implode(',', $u) }}">
+                                        </div>
+                                        <div id="developers_id">
+                                        @foreach($task->users as $user)
+                                            <input type="hidden" class="devs" name="{{ $task->status === 'assigned' ? "developers[]" : '' }}" value="{{ $user->id }}">
+                                        @endforeach
+                                        </div>
                                         <div class="form-group position-absolute" id="searchSection">
                                             <select multiple class="form-control d-none" id="searchResult"></select>
                                         </div>
                                     </div>
                                 </div>
-                            @endif
+
 
                             <div class="form-group row mb-0">
                                 <div class="col-md-6 offset-md-4">

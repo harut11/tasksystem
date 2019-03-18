@@ -5,8 +5,11 @@
     <td>
         @if(count($task->users))
             @foreach($task->users as $user)
-                {{ $user->first_name . ', ' }}
+                @php
+                    $u[] = $user->first_name;
+                @endphp
             @endforeach
+            {{ implode(', ', $u) }}
         @else
             No assigned
         @endif
