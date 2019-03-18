@@ -4,12 +4,13 @@ let project = {
     devName: $('.developerName'),
     staticDevName: $('#staticDev'),
     developers: [],
+    selectMode: $('#role').val(),
+    orderType: null,
 
-    roleChange: (event) => {
-        let selectMode = $(event.target).val(),
-            html = '';
+    roleChange: (val = null) => {
+        let html = '';
 
-        if (selectMode === 'developer') {
+        if (project.selectMode !== null && project.selectMode === 'developer' || val ==='developer') {
             html = '<label for="level" class="col-md-4 col-form-label text-md-right">Level</label>\n' +
                     '<div class="col-md-6">\n' +
                         '<select id="level" class="form-control" name="level">\n' +
@@ -21,7 +22,7 @@ let project = {
 
             project.levelSelect.html(html);
             project.levelSelect.removeClass('d-none');
-        } else if (selectMode === 'manager') {
+        } else if (project.selectMode === 'manager' || val === 'manager') {
             project.levelSelect.addClass('d-none');
         }
     },
@@ -155,20 +156,56 @@ let project = {
                 project.developers.push($(value).val());
             });
         }
+    },
+
+    paginate: () => {
+        $(document).on('click', '.pagination a', (event) => {
+            event.preventDefault();
+            let li = $('.pagination li'),
+                pagination = $('.pagination'),
+                next = pagination.last(),
+                prev = pagination.first();
+
+            li.removeClass('active').removeAttr('aria-current');
+            $(event.target).closest('li').addClass('active').attr('aria-current', 'page');
+
+            if ($(event.target) !== pagination.children().eq(1)) {
+                pagination.children().eq(1).empty().html('<a class="page-link" href="http://127.0.0.1:8000/manager/task?page=1">1</a>');
+            }
+
+            let url = $(event.target).attr('href');
+
+            if (project.orderType !== null) {
+                project.getTasks(url, project.orderType);
+            } else {
+                project.getTasks(url);
+            }
+        })
+    },
+
+    getTasks: (url, order = null) => {
+        $.ajax({
+            url: url,
+            data: {order: order},
+            success: (data) => {
+                $('#task').html(data);
+            }
+        })
     }
 };
 
 $(document).on('change', '#role', (event) => {
-    project.roleChange(event);
+    project.selectMode = $(event.target).val();
+    project.roleChange($(event.target).val());
 });
 
 $(document).on('change', '.status', (event) => {
     project.statusChange(event);
 });
 
-$(document).on('keyup', '#developer_name', (event) => {
+$(document).on('input', '#developer_name', (event) => {
     event.preventDefault();
-    let val = $(event.target).val();
+    let val = $.trim($(event.target).val());
     project.userAutocomplete(val);
 });
 
@@ -192,6 +229,18 @@ $('body').on('click', () => {
     }
 });
 
+$(document).on('click', '.order', (event) => {
+    event.preventDefault();
+    let order = $(event.target).closest('.order').attr('data-attribute');
+
+    project.getTasks('http://127.0.0.1:8000/manager/task', order);
+    project.orderType = order;
+});
+
 project.getDevelopers();
 
 project.deadlinePicker();
+
+project.roleChange();
+
+project.paginate();

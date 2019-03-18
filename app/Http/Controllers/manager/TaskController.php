@@ -15,9 +15,22 @@ class TaskController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $tasks = tasks::query()->with('users')->get();
+        $tasks = $this->getTasksQuery('DESC');
+
+        if ($request->ajax()) {
+
+            if ($request->order === 'asc') {
+                $tasks = $this->getTasksQuery('ASC');
+                return view('manager.task.load', compact('tasks'));
+            } else if ($request->order === 'desc') {
+                $tasks = $this->getTasksQuery('DESC');
+                return view('manager.task.load', compact('tasks'));
+            }
+
+            return view('manager.task.load', compact('tasks'));
+        }
         return view('manager.task.tasks', compact('tasks'));
     }
 
@@ -91,10 +104,16 @@ class TaskController extends Controller
      */
     public function edit($id)
     {
-        $task = tasks::query()->where('id', $id)->with('users')
+        $task = tasks::query()->where('id', $id)
+            ->where('manager_id', auth()->id())
+            ->with('users')
             ->first();
 
-        return view('manager.task.edit', compact('task'));
+        if (isset($task)) {
+            return view('manager.task.edit', compact('task'));
+        } else {
+            return redirect()->route('manager.task.index');
+        }
     }
 
     /**
@@ -113,22 +132,35 @@ class TaskController extends Controller
             'status' => 'string'
         ]);
 
-        tasks::query()->where('id', $id)
-            ->where('status', '<>', 'inprogress')
-            ->where('status', '<>', 'done')
-            ->update([
-            'name' => $request['name'],
-            'description' => $request['description'],
-            'deadline' => Carbon::parse($request['deadline']),
-            'status' => $request['status'],
-            'updated_at' => Carbon::now()
-        ]);
+        $task = tasks::query()->where('id', $id)
+            ->where('manager_id', auth()->id())
+            ->first();
 
-        if (isset($request['developers']) && !empty($request['developers'])) {
-            task_user::query()->where('task_id', $id)->delete();
-            $this->changePivot('insert', $id, $request);
+        if (isset($task)) {
+            $task->update([
+                'name' => $request['name'],
+                'description' => $request['description'],
+                'deadline' => Carbon::parse($request['deadline']),
+                'status' => $request['status'],
+                'updated_at' => Carbon::now()
+            ]);
+
+            if (isset($request['developers']) && !empty($request['developers'])
+                && ($task->status === 'assigned' || $task->status === 'created')) {
+                task_user::query()->where('task_id', $id)->delete();
+                $this->changePivot('insert', $id, $request);
+
+                return redirect()->route('manager.task.index');
+            } else if (!isset($request['developers']) && $task->status === 'assigned') {
+                task_user::query()->where('task_id', $id)->delete();
+
+                $task->update([
+                    'status' => 'created'
+                ]);
+
+                return redirect()->route('manager.task.index');
+            }
         }
-
         return redirect()->route('manager.task.index');
     }
 
@@ -140,9 +172,16 @@ class TaskController extends Controller
      */
     public function destroy($id)
     {
-        $task = tasks::findOrFail($id);
-        $task->delete();
-        return redirect()->route('manager.task.index');
+        $task = tasks::query()->where('id', $id)
+            ->where('manager_id', auth()->id())
+            ->first();
+
+        if (isset($task)) {
+            $task->delete();
+            return redirect()->route('manager.task.index');
+        } else {
+            return redirect()->route('manager.task.index');
+        }
     }
 
     public function changePivot($action, $id, $request) {
@@ -158,5 +197,10 @@ class TaskController extends Controller
         }
 
         task_user::$action($records);
+    }
+
+    public function getTasksQuery($condition)
+    {
+        return tasks::query()->with('users')->orderBy('name', $condition)->paginate(3);
     }
 }

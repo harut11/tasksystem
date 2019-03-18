@@ -1,4 +1,4 @@
-<tr class="{{ strtotime('1 day ago') < strtotime($task->deadline) ? 'text-danger' : '' }}">
+<tr class="{{ Carbon\Carbon::parse($task->deadline)->diffInDays(\Carbon\Carbon::now()) <= 1 ? 'text-danger' : '' }}">
     <td>{{ $task->name }}</td>
     <td>{{ str_limit($task->description, 10) }}</td>
     <td>{{ $task->status }}</td>

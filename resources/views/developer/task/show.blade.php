@@ -24,7 +24,7 @@
             <h5 class="card-title">Name: {{ $task->name }}</h5>
             <p class="card-text">Description: {{ $task->description }}</p>
             <p class="card-text">Created At: {{ $task->created_at }}</p>
-            <p class="card-text">Deadline: {{ $task->deadline }}</p>
+            <p class="card-text {{ Carbon\Carbon::parse($task->deadline)->diffInDays(\Carbon\Carbon::now()) <= 1 ? 'text-danger' : '' }}">Deadline: {{ $task->deadline }}</p>
             <p class="card-text">Status: {{ $task->status }}</p>
         </div>
     </div>

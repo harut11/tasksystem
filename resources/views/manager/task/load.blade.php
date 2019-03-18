@@ -1,0 +1,1 @@
+@each('manager.task._task', $tasks, 'task', 'manager.task._empty')

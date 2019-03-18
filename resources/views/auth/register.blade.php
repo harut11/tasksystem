@@ -16,8 +16,8 @@
 
                             <div class="col-md-6">
                                 <select id="role" class="form-control" name="role">
-                                    <option value="manager" class="roleType">Manager</option>
-                                    <option value="developer" class="roleType">Developer</option>
+                                    <option value="manager" class="roleType" {{ !empty($errors->all()) && old('role') === 'manager' ? 'selected' : '' }}>Manager</option>
+                                    <option value="developer" class="roleType" {{ !empty($errors->all()) && old('role') === 'developer' ? 'selected' : '' }}>Developer</option>
                                 </select>
 
                                 @if ($errors->has('role'))

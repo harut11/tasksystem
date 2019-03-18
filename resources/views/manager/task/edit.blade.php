@@ -70,7 +70,6 @@
                                             <option value="inprogress" class="taskStatus" {{ $task->status === 'inprogress' ? 'selected' : ''}}>In Progress</option>
                                             <option value="done" class="taskStatus" {{ $task->status === 'done' ? 'selected' : ''}}>Done</option>
                                         @elseif($task->status === 'inprogress' || $task->status === 'done')
-                                            <option value="created" class="taskStatus" {{ $task->status === 'created' ? 'selected' : ''}}>Created</option>
                                             <option value="done" class="taskStatus" {{ $task->status === 'done' ? 'selected' : ''}}>Done</option>
                                             <option value="inprogress" class="taskStatus" {{ $task->status === 'inprogress' ? 'selected' : ''}}>In Progress</option>
                                         @endif

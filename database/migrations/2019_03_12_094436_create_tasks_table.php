@@ -18,7 +18,7 @@ class CreateTasksTable extends Migration
             $table->increments('id')->unsigned();
             $table->string('name');
             $table->text('description')->nullable();
-            $table->timestamp('deadline');
+            $table->dateTime('deadline');
             $table->string('status')->default('created');
             $table->integer('manager_id')->unsigned();
             $table->timestamps();
