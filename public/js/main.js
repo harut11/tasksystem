@@ -171,6 +171,18 @@ let project = {
                 activatePrev = () => {
                     prev.empty().removeClass('disabled').removeAttr('aria-disabled')
                         .html('<a class="page-link" href="" rel="prev">‹</a>');
+                },
+                activateOne = () => {
+                    console.log(url.indexOf('developer'));
+                    if (url.indexOf('manager') > 0) {
+                        pagination.children().eq(1).empty()
+                            .html('<a class="page-link" href="http://127.0.0.1:8000/manager/task?page=1">1</a>');
+                        activatePrev();
+                    } else if (url.indexOf('manager') > 0) {
+                        pagination.children().eq(1).empty()
+                            .html('<a class="page-link" href="http://127.0.0.1:8000/developer/task?page=1">1</a>');
+                        activatePrev();
+                    }
                 };
 
             li.removeClass('active').removeAttr('aria-current');
@@ -181,6 +193,7 @@ let project = {
                         d = next.find('a').attr('href').replace('http://127.0.0.1:8000/developer/task?page=', '');
 
                     activatePrev();
+                    activateOne();
 
                     $.each(li, (key, value) => {
                         if ($(value).find('a').text() === m || $(value).find('a').text() === d) {
@@ -196,6 +209,7 @@ let project = {
                         l= prev.find('a').attr('href').replace('http://127.0.0.1:8000/developer/task?page=', '');
 
                     activatePrev();
+                    activateOne();
 
                         $.each(li, (key, value) => {
                             if ($(value).find('a').text() === f || $(value).find('a').text() === l) {
@@ -207,12 +221,7 @@ let project = {
                         });
                 }
             } else {
-
-                if (clicked !== pagination.children().eq(1)) {
-                    pagination.children().eq(1).empty()
-                        .html('<a class="page-link" href="http://127.0.0.1:8000/manager/task?page=1">1</a>');
-                    activatePrev();
-                }
+                activateOne();
 
                 clicked.addClass('active').attr('aria-current', 'page');
                 next.find('a').attr('href', clicked.next().find('a').attr('href'));
@@ -235,8 +244,30 @@ let project = {
                 $('.task').html(data);
             }
         })
-    }
+    },
 };
+
+$(document).keydown((e) => {
+    let searchResult = document.getElementById('searchResult');
+
+    if (searchResult) {
+        switch (e.keyCode) {
+            case 40:
+                searchResult.focus();
+                break;
+            case 13:
+                e.preventDefault();
+
+                $.each($('.userOption'), (key, value) => {
+
+                    if ($(value).val() === $(searchResult).val()[0]) {
+                        $(value).trigger('click');
+                    }
+                });
+                break;
+        }
+    }
+});
 
 $(document).on('change', '#role', (event) => {
     project.selectMode = $(event.target).val();
@@ -249,6 +280,7 @@ $(document).on('change', '.status', (event) => {
 
 $(document).on('input', '#developer_name', (event) => {
     event.preventDefault();
+    
     let val = $.trim($(event.target).val());
     project.userAutocomplete(val);
 });
