@@ -163,11 +163,14 @@ let project = {
             event.preventDefault();
             let li = $('.pagination li'),
                 pagination = $('.pagination'),
-                next = pagination.last(),
-                prev = pagination.first();
+                clicked = $(event.target).closest('li'),
+                next = li.last(),
+                prev = li.first();
 
             li.removeClass('active').removeAttr('aria-current');
-            $(event.target).closest('li').addClass('active').attr('aria-current', 'page');
+            if (clicked !== next || clicked !== prev) {
+                clicked.addClass('active').attr('aria-current', 'page');
+            }
 
             if ($(event.target) !== pagination.children().eq(1)) {
                 pagination.children().eq(1).empty().html('<a class="page-link" href="http://127.0.0.1:8000/manager/task?page=1">1</a>');
