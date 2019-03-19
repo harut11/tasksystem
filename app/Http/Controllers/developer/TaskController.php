@@ -13,9 +13,22 @@ class TaskController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $tasks = tasks::query()->with('users')->get();
+        $tasks = $this->getTasksQuery('DESC');
+
+        if ($request->ajax()) {
+
+            if ($request->order === 'asc') {
+                $tasks = $this->getTasksQuery('ASC');
+                return view('developer.task.load', compact('tasks'));
+            } else if ($request->order === 'desc') {
+                $tasks = $this->getTasksQuery('DESC');
+                return view('developer.task.load', compact('tasks'));
+            }
+
+            return view('developer.task.load', compact('tasks'));
+        }
         return view('developer.task.index', compact('tasks'));
     }
 
@@ -110,5 +123,10 @@ class TaskController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function getTasksQuery($condition)
+    {
+        return tasks::query()->with('users')->orderBy('name', $condition)->paginate(3);
     }
 }

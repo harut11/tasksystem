@@ -6,7 +6,14 @@
         <caption>List of tasks</caption>
         <thead>
         <tr>
-            <th scope="col">Name</th>
+            <th scope="col" class="dev">
+                <button type="button" class="order bg-transparent border-0" data-attribute="asc">
+                    <i class="fas fa-angle-up"></i>
+                </button> /
+                <button type="button" class="order bg-transparent border-0" data-attribute="desc">
+                    <i class="fas fa-angle-down"></i>
+                </button> Name
+            </th>
             <th scope="col">Description</th>
             <th scope="col">Status</th>
             <th scope="col">Developer(s)</th>
@@ -14,8 +21,9 @@
             <th scope="col">Actions</th>
         </tr>
         </thead>
-        <tbody>
+        <tbody class="task">
         @each('developer.task._task', $tasks, 'task', 'developer.task._empty')
         </tbody>
     </table>
+    <div class="ml-auto">{{ $tasks->links() }}</div>
 @endsection

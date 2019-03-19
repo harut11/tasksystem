@@ -161,29 +161,70 @@ let project = {
     paginate: () => {
         $(document).on('click', '.pagination a', (event) => {
             event.preventDefault();
+
             let li = $('.pagination li'),
                 pagination = $('.pagination'),
                 clicked = $(event.target).closest('li'),
-                next = li.last(),
-                prev = li.first();
+                next = pagination.children().eq(-1),
+                prev = pagination.children().eq(0),
+                url = $(event.target).attr('href'),
+                activatePrev = () => {
+                    prev.empty().removeClass('disabled').removeAttr('aria-disabled')
+                        .html('<a class="page-link" href="" rel="prev">‹</a>');
+                };
 
             li.removeClass('active').removeAttr('aria-current');
-            if (clicked !== next || clicked !== prev) {
+            
+            if ($(event.target).closest('a').is('[rel]')) {
+                if ($(event.target).closest('a').is('[rel="next"]')) {
+                    let m = next.find('a').attr('href').replace('http://127.0.0.1:8000/manager/task?page=', ''),
+                        d = next.find('a').attr('href').replace('http://127.0.0.1:8000/developer/task?page=', '');
+
+                    activatePrev();
+
+                    $.each(li, (key, value) => {
+                        if ($(value).find('a').text() === m || $(value).find('a').text() === d) {
+                            $(value).addClass('active').attr('aria-current', 'page');
+
+                            next.find('a').attr('href', $(value).next().find('a').attr('href'));
+                            prev.find('a').attr('href', $(value).prev().find('a').attr('href'));
+                        }
+                    });
+
+                } else if($(event.target).closest('a').is('[rel="prev"]')) {
+                    let f = prev.find('a').attr('href').replace('http://127.0.0.1:8000/manager/task?page=', ''),
+                        l= prev.find('a').attr('href').replace('http://127.0.0.1:8000/developer/task?page=', '');
+
+                    activatePrev();
+
+                        $.each(li, (key, value) => {
+                            if ($(value).find('a').text() === f || $(value).find('a').text() === l) {
+                                $(value).addClass('active').attr('aria-current', 'page');
+
+                                prev.find('a').attr('href', $(value).prev().find('a').attr('href'));
+                                next.find('a').attr('href', $(value).next().find('a').attr('href'));
+                            }
+                        });
+                }
+            } else {
+
+                if (clicked !== pagination.children().eq(1)) {
+                    pagination.children().eq(1).empty()
+                        .html('<a class="page-link" href="http://127.0.0.1:8000/manager/task?page=1">1</a>');
+                    activatePrev();
+                }
+
                 clicked.addClass('active').attr('aria-current', 'page');
+                next.find('a').attr('href', clicked.next().find('a').attr('href'));
+                prev.find('a').attr('href', clicked.prev().find('a').attr('href'));
             }
-
-            if ($(event.target) !== pagination.children().eq(1)) {
-                pagination.children().eq(1).empty().html('<a class="page-link" href="http://127.0.0.1:8000/manager/task?page=1">1</a>');
-            }
-
-            let url = $(event.target).attr('href');
 
             if (project.orderType !== null) {
                 project.getTasks(url, project.orderType);
             } else {
                 project.getTasks(url);
             }
-        })
+        });
     },
 
     getTasks: (url, order = null) => {
@@ -191,7 +232,7 @@ let project = {
             url: url,
             data: {order: order},
             success: (data) => {
-                $('#task').html(data);
+                $('.task').html(data);
             }
         })
     }
@@ -234,9 +275,15 @@ $('body').on('click', () => {
 
 $(document).on('click', '.order', (event) => {
     event.preventDefault();
-    let order = $(event.target).closest('.order').attr('data-attribute');
+    let order = $(event.target).closest('.order').attr('data-attribute'),
+        th = $(event.target).closest('th');
 
-    project.getTasks('http://127.0.0.1:8000/manager/task', order);
+    if (th.hasClass('dev')) {
+        project.getTasks('http://127.0.0.1:8000/developer/task', order);
+    } else {
+        project.getTasks('http://127.0.0.1:8000/manager/task', order);
+    }
+
     project.orderType = order;
 });
 

@@ -22,7 +22,7 @@
             <th scope="col">Actions</th>
         </tr>
         </thead>
-        <tbody id="task">
+        <tbody class="task">
         @each('manager.task._task', $tasks, 'task', 'manager.task._empty')
         </tbody>
     </table>
