@@ -69,7 +69,7 @@ class TaskController extends Controller
             'name' => $request['name'],
             'description' => $request['description'],
             'deadline' => Carbon::parse($request['deadline']),
-            'status' => $request['status'],
+            'status' => empty($request['developers']) ? 'created' : $request['status'],
             'manager_id' => auth()->id(),
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now()

@@ -266,6 +266,12 @@ $(document).keydown((e) => {
     }
 });
 
+$.ajaxSetup({
+    headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    }
+});
+
 $(document).on('change', '#role', (event) => {
     project.selectMode = $(event.target).val();
     project.roleChange($(event.target).val());
