@@ -62,7 +62,7 @@ class TaskController extends Controller
     public function show($id)
     {
         $task = tasks::query()->where('id', $id)->with('users')
-            ->first();
+            ->firstOrFail();
 
         return view('developer.task.show', compact('task'));
     }
@@ -78,13 +78,9 @@ class TaskController extends Controller
         $task = tasks::query()->where('id', $id)->with('users')
             ->join('task_user', 'tasks.id', '=', 'task_user.task_id')
             ->where('user_id', auth()->id())
-            ->first();
+            ->firstOrFail();
 
-        if (isset($task)) {
-            return view('developer.task.edit', compact('task'));
-        } else {
-            return redirect()->route('developer.task.index');
-        }
+        return view('developer.task.edit', compact('task'));
     }
 
     /**
@@ -103,14 +99,11 @@ class TaskController extends Controller
         $task = tasks::query()->where('id', $id)->with('users')
             ->join('task_user', 'tasks.id', '=', 'task_user.task_id')
             ->where('user_id', auth()->id())
-            ->first();
+            ->firstOrFail();
 
-        if(isset($task)) {
-            $task->update([
-                'status' => $request['status']
-            ]);
-            return redirect()->route('developer.task.index');
-        }
+        $task->update([
+            'status' => $request['status']
+        ]);
         return redirect()->route('developer.task.index');
     }
 

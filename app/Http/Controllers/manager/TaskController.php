@@ -91,7 +91,7 @@ class TaskController extends Controller
     public function show($id)
     {
         $task = tasks::query()->where('id', $id)->with('users')
-            ->first();
+            ->firstOrFail();
 
         return view('manager.task.show', compact('task'));
     }
@@ -107,13 +107,9 @@ class TaskController extends Controller
         $task = tasks::query()->where('id', $id)
             ->where('manager_id', auth()->id())
             ->with('users')
-            ->first();
+            ->firstOrFail();
 
-        if (isset($task)) {
-            return view('manager.task.edit', compact('task'));
-        } else {
-            return redirect()->route('manager.task.index');
-        }
+        return view('manager.task.edit', compact('task'));
     }
 
     /**
@@ -174,14 +170,10 @@ class TaskController extends Controller
     {
         $task = tasks::query()->where('id', $id)
             ->where('manager_id', auth()->id())
-            ->first();
+            ->firstOrFail();
 
-        if (isset($task)) {
-            $task->delete();
-            return redirect()->route('manager.task.index');
-        } else {
-            return redirect()->route('manager.task.index');
-        }
+        $task->delete();
+        return redirect()->route('manager.task.index');
     }
 
     public function changePivot($action, $id, $request) {
