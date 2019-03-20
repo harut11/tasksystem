@@ -173,7 +173,7 @@ let project = {
                         .html('<a class="page-link" href="" rel="prev">‹</a>');
                 },
                 activateOne = () => {
-                    console.log(url.indexOf('developer'));
+
                     if (url.indexOf('manager') > 0) {
                         pagination.children().eq(1).empty()
                             .html('<a class="page-link" href="http://127.0.0.1:8000/manager/task?page=1">1</a>');
@@ -207,9 +207,6 @@ let project = {
                 } else if($(event.target).closest('a').is('[rel="prev"]')) {
                     let f = prev.find('a').attr('href').replace('http://127.0.0.1:8000/manager/task?page=', ''),
                         l= prev.find('a').attr('href').replace('http://127.0.0.1:8000/developer/task?page=', '');
-
-                    activatePrev();
-                    activateOne();
 
                         $.each(li, (key, value) => {
                             if ($(value).find('a').text() === f || $(value).find('a').text() === l) {
