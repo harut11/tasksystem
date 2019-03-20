@@ -178,7 +178,7 @@ let project = {
                         pagination.children().eq(1).empty()
                             .html('<a class="page-link" href="http://127.0.0.1:8000/manager/task?page=1">1</a>');
                         activatePrev();
-                    } else if (url.indexOf('manager') > 0) {
+                    } else if (url.indexOf('developer') > 0) {
                         pagination.children().eq(1).empty()
                             .html('<a class="page-link" href="http://127.0.0.1:8000/developer/task?page=1">1</a>');
                         activatePrev();
