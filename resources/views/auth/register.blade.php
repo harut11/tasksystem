@@ -15,14 +15,14 @@
                             <label for="role" class="col-md-4 col-form-label text-md-right">{{ __('Role') }}</label>
 
                             <div class="col-md-6">
-                                <select id="role" class="form-control" name="role">
-                                    <option value="manager" class="roleType" {{ !empty($errors->all()) && old('role') === 'manager' ? 'selected' : '' }}>Manager</option>
-                                    <option value="developer" class="roleType" {{ !empty($errors->all()) && old('role') === 'developer' ? 'selected' : '' }}>Developer</option>
+                                <select id="role" class="form-control" name="role_id">
+                                    <option value="manager" class="roleType" {{ !empty($errors->all()) && old('role_id') === 'manager' ? 'selected' : '' }}>Manager</option>
+                                    <option value="developer" class="roleType" {{ !empty($errors->all()) && old('role_id') === 'developer' ? 'selected' : '' }}>Developer</option>
                                 </select>
 
-                                @if ($errors->has('role'))
+                                @if ($errors->has('role_id'))
                                     <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $errors->first('role') }}</strong>
+                                        <strong>{{ $errors->first('role_id') }}</strong>
                                     </span>
                                 @endif
                             </div>

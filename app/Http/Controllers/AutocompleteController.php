@@ -18,7 +18,7 @@ class AutocompleteController extends Controller
         if (isset($term) && strlen($term) > 1) {
 
             $users = User::where('first_name', 'LIKE', '%' . $term .'%')
-                ->where('role', 'developer')->get();
+                ->where('role_id', 2)->get();
 
             foreach ($users as $user) {
                 $finded_users[] = $user;

@@ -14,6 +14,7 @@
 </head>
 
 <body>
+    @yield('navbar')
     <div id="app" class="container mt-5">
         @yield('content')
     </div>

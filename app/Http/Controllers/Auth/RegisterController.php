@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\User;
+use App\Models\role;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -49,6 +50,8 @@ class RegisterController extends Controller
     protected function validator(array $data)
     {
         return Validator::make($data, [
+            'role_id' => ['required', 'string', 'exists:roles,name'],
+            'level' => 'in:junior,middle,senior',
             'first_name' => ['required', 'string', 'max:50', 'min:2'],
             'last_name' => ['required', 'string', 'max:60', 'min:2'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
@@ -64,23 +67,15 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
-        if (isset($data['level'])) {
-            return User::create([
-                'role' => $data['role'],
-                'level' => $data['level'],
-                'first_name' => $data['first_name'],
-                'last_name' => $data['last_name'],
-                'email' => $data['email'],
-                'password' => Hash::make($data['password'])
-            ]);
-        } else {
-            return User::create([
-                'role' => $data['role'],
-                'first_name' => $data['first_name'],
-                'last_name' => $data['last_name'],
-                'email' => $data['email'],
-                'password' => Hash::make($data['password'])
-            ]);
-        }
+        $role = role::query()->where('name', $data['role_id'])->first('id');
+
+        return User::create([
+            'first_name' => $data['first_name'],
+            'last_name' => $data['last_name'],
+            'email' => $data['email'],
+            'password' => Hash::make($data['password']),
+            'role_id' => $role->id,
+            'level' => isset($data['level']) ? $data['level'] : null
+        ]);
     }
 }

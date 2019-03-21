@@ -17,17 +17,11 @@ class TaskController extends Controller
      */
     public function index(Request $request)
     {
-        $tasks = $this->getTasksQuery('DESC');
+        $tasks = $this->getTasksQuery('name', 'DESC', 3);
 
         if ($request->ajax()) {
 
-            if ($request->order === 'asc') {
-                $tasks = $this->getTasksQuery('ASC');
-                return view('manager.task.load', compact('tasks'));
-            } else if ($request->order === 'desc') {
-                $tasks = $this->getTasksQuery('DESC');
-                return view('manager.task.load', compact('tasks'));
-            }
+            $tasks = $this->getTasksQuery('name', $request->order, 3);
 
             return view('manager.task.load', compact('tasks'));
         }
@@ -56,14 +50,9 @@ class TaskController extends Controller
            'name' => 'required|min:5|max:255',
             'description' => 'min:10',
             'deadline' => 'required|date_format:"Y/m/d h:i A"',
-            'status' => 'string'
+            'status' => 'string',
+            'developers' => isset($request['developers']) ? 'required' : ''
         ]);
-
-        if (isset($request['developers'])) {
-            $request->validate([
-                'developers' => 'required'
-            ]);
-        }
 
         $id = tasks::insertGetId([
             'name' => $request['name'],
@@ -192,8 +181,9 @@ class TaskController extends Controller
         task_user::$action($records);
     }
 
-    public function getTasksQuery($condition)
+    public function getTasksQuery($column, $condition, $pages)
     {
-        return tasks::query()->with('users')->orderBy('name', $condition)->paginate(3);
+        return tasks::query()->with('users')
+            ->orderBy($column, is_null($condition) ? 'DESC' : $condition)->paginate($pages);
     }
 }
