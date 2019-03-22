@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css"
           integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
-    <link href="{{ asset('css/daterangepicker.css') }}" rel="stylesheet">
+    @stack('daterangecss')
     <link href="{{ asset('css/main.css') }}" rel="stylesheet">
 </head>
 
@@ -20,8 +20,11 @@
     </div>
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}" defer></script>
-    <script src="{{ asset('js/moment.min.js') }}" defer></script>
-    <script src="{{ asset('js/daterangepicker.js') }}" defer></script>
+    @stack('moment')
+    @stack('daterangepicker')
+    @stack('createupdate')
+    @stack('paginateorder')
+    @stack('register')
     <script src="{{ asset('js/main.js') }}" defer></script>
 </body>
 </html>

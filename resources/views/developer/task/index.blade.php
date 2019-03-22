@@ -27,3 +27,7 @@
     </table>
     <div class="ml-auto">{{ $tasks->links() }}</div>
 @endsection
+
+@push('paginateorder')
+    <script src="{{ asset('js/paginateorder.js') }}" defer></script>
+@endpush

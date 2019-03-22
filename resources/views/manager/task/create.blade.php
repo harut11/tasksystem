@@ -94,3 +94,19 @@
         </div>
     </div>
 @endsection
+
+@push('daterangecss')
+    <link href="{{ asset('css/daterangepicker.css') }}" rel="stylesheet">
+@endpush
+
+@push('createupdate')
+    <script src="{{ asset('js/createupdate.js') }}" defer></script>
+@endpush
+
+@push('moment')
+    <script src="{{ asset('js/moment.min.js') }}" defer></script>
+@endpush
+
+@push('daterangepicker')
+    <script src="{{ asset('js/daterangepicker.js') }}" defer></script>
+@endpush

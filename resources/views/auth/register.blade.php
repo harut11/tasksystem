@@ -108,3 +108,7 @@
     </div>
 </div>
 @endsection
+
+@push('register')
+    <script src="{{ asset('js/register.js') }}" defer></script>
+@endpush
