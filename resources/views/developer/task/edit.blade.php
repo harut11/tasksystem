@@ -11,7 +11,7 @@
                     <div class="card-body">
                         <form method="POST" action="{{ route('developer.task.update', $task->id) }}">
                             @csrf
-
+                            @method('PUT')
                             <div class="form-group row">
                                 <label for="status3" class="col-md-4 col-form-label text-md-right">{{ __('Status') }}</label>
 

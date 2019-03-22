@@ -15,42 +15,15 @@ class TaskController extends Controller
      */
     public function index(Request $request)
     {
-        $tasks = $this->getTasksQuery('DESC');
+        $tasks = $this->getTasksQuery('name', 'DESC', 3);
 
         if ($request->ajax()) {
 
-            if ($request->order === 'asc') {
-                $tasks = $this->getTasksQuery('ASC');
-                return view('developer.task.load', compact('tasks'));
-            } else if ($request->order === 'desc') {
-                $tasks = $this->getTasksQuery('DESC');
-                return view('developer.task.load', compact('tasks'));
-            }
+            $tasks = $this->getTasksQuery('name',$request->order, 3);
 
             return view('developer.task.load', compact('tasks'));
         }
         return view('developer.task.index', compact('tasks'));
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
     }
 
     /**
@@ -107,19 +80,9 @@ class TaskController extends Controller
         return redirect()->route('developer.task.index');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
+    public function getTasksQuery($column, $condition, $pages)
     {
-        //
-    }
-
-    public function getTasksQuery($condition)
-    {
-        return tasks::query()->with('users')->orderBy('name', $condition)->paginate(3);
+        return tasks::query()->with('users')
+            ->orderBy($column, is_null($condition) ? 'DESC' : $condition)->paginate($pages);
     }
 }

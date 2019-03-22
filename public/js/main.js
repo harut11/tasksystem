@@ -61,9 +61,12 @@ let project = {
 
     userAutocomplete: (val) => {
         $.ajax({
-            url: '/searchuser',
+            url: '/manager/searchuser',
             method: 'get',
             data: {val: val},
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
             success: (response) => {
                 if (response) {
                     let users = JSON.parse(response)['users'],
@@ -266,11 +269,11 @@ $(document).keydown((e) => {
     }
 });
 
-$.ajaxSetup({
-    headers: {
-        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-    }
-});
+// $.ajaxSetup({
+//     headers: {
+//         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+//     }
+// });
 
 $(document).on('change', '#role', (event) => {
     project.selectMode = $(event.target).val();

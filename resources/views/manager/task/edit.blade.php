@@ -11,6 +11,7 @@
                     <div class="card-body">
                         <form method="POST" action="{{ route('manager.task.update', $task->id) }}">
                             @csrf
+                            @method('PUT')
                             <div class="form-group row">
                                 <label for="name" class="col-md-4 col-form-label text-md-right">{{ __('Name') }}</label>
 

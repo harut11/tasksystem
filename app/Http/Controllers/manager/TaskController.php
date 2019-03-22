@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\manager;
 
+use App\User;
 use Carbon\Carbon;
 use App\Models\tasks;
 use App\Models\task_user;
@@ -185,5 +186,23 @@ class TaskController extends Controller
     {
         return tasks::query()->with('users')
             ->orderBy($column, is_null($condition) ? 'DESC' : $condition)->paginate($pages);
+    }
+
+    public function searchUser(Request $request)
+    {
+        $term = $request['val'];
+        $finded_users = [];
+
+        if (isset($term) && strlen($term) > 1) {
+
+            $users = User::where('first_name', 'LIKE', '%' . $term .'%')
+                ->where('role_id', 2)->get(['first_name', 'email', 'id']);
+
+            foreach ($users as $user) {
+                $finded_users[] = $user;
+            }
+
+            echo json_encode(['users' => $finded_users]);
+        }
     }
 }

@@ -20,7 +20,7 @@
         <a class="btn btn-secondary mr-2 float-left editTask" href="{{ route('manager.task.edit', $task->id) }}">
             <i class="fas fa-edit"></i>
         </a>
-        <form class="float-left" method="post" action="/task/{{ $task->id }}">
+        <form class="float-left" method="post" action="{{ route('manager.task.destroy', $task->id) }}">
             @csrf
             @method('DELETE')
             <button type="submit" class="btn btn-secondary"><i class="far fa-trash-alt"></i></button>
