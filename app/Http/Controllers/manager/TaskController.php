@@ -22,7 +22,7 @@ class TaskController extends Controller
 
         if ($request->ajax()) {
 
-            $tasks = $this->getTasksQuery('name', $request->order, 3);
+            $tasks = $this->getTasksQuery($request->what, $request->order, 3);
 
             return view('manager.task.load', compact('tasks'));
         }
@@ -185,7 +185,8 @@ class TaskController extends Controller
     public function getTasksQuery($column, $condition, $pages)
     {
         return tasks::query()->with('users')
-            ->orderBy($column, is_null($condition) ? 'DESC' : $condition)->paginate($pages);
+            ->orderBy(is_null($column) ? 'name' : $column, is_null($condition) ? 'DESC' : $condition)
+            ->paginate($pages);
     }
 
     public function searchUser(Request $request)

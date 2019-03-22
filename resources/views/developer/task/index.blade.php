@@ -17,7 +17,14 @@
             <th scope="col">Description</th>
             <th scope="col">Status</th>
             <th scope="col">Developer(s)</th>
-            <th scope="col">Deadline</th>
+            <th scope="col" class="dev">
+                <button type="button" class="order bg-transparent border-0" data-name="deadline" data-attribute="asc">
+                    <i class="fas fa-angle-up"></i>
+                </button> /
+                <button type="button" class="order bg-transparent border-0" data-name="deadline" data-attribute="desc">
+                    <i class="fas fa-angle-down"></i>
+                </button> Deadline
+            </th>
             <th scope="col">Actions</th>
         </tr>
         </thead>

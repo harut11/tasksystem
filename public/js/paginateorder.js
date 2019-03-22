@@ -1,5 +1,6 @@
 let paginateOrder = {
     orderType: null,
+    what: null,
 
     paginate: () => {
         $(document).on('click', '.pagination a', (event) => {
@@ -32,7 +33,6 @@ let paginateOrder = {
 
             if ($(event.target).closest('a').is('[rel]')) {
                 if ($(event.target).closest('a').is('[rel="next"]')) {
-                    console.log(window.location.protocol + '//' + window.location.hostname + '/manager/task?page=');
                     let m = next.find('a').attr('href').replace(window.location.protocol + '//' + window.location.hostname + '/manager/task?page=', ''),
                         d = next.find('a').attr('href').replace(window.location.protocol + '//' + window.location.hostname + '/developer/task?page=', '');
 
@@ -69,18 +69,14 @@ let paginateOrder = {
                 prev.find('a').attr('href', clicked.prev().find('a').attr('href'));
             }
 
-            if (paginateOrder.orderType !== null) {
-                paginateOrder.getTasks(url, paginateOrder.orderType);
-            } else {
-                paginateOrder.getTasks(url);
-            }
+            paginateOrder.getTasks(url, paginateOrder.what, paginateOrder.orderType);
         });
     },
 
-    getTasks: (url, order = null) => {
+    getTasks: (url, what = null, order = null) => {
         $.ajax({
             url: url,
-            data: {order: order},
+            data: {order: order, what: what},
             success: (data) => {
                 $('.task').html(data);
             }
@@ -91,15 +87,17 @@ let paginateOrder = {
 $(document).on('click', '.order', (event) => {
     event.preventDefault();
     let order = $(event.target).closest('.order').attr('data-attribute'),
+        what = $(event.target).closest('.order').attr('data-name'),
         th = $(event.target).closest('th');
 
     if (th.hasClass('dev')) {
-        paginateOrder.getTasks('/developer/task', order);
+        paginateOrder.getTasks('/developer/task', what, order);
     } else {
-        paginateOrder.getTasks('/manager/task', order);
+        paginateOrder.getTasks('/manager/task', what, order);
     }
 
     paginateOrder.orderType = order;
+    paginateOrder.what = what;
 });
 
 paginateOrder.paginate();
