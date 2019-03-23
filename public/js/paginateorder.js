@@ -79,6 +79,7 @@ let paginateOrder = {
                 if (clicked.prev().find('a').attr('rel') !== 'prev') {
                     prev.find('a').attr('href', clicked.prev().find('a').attr('href'));
                 } else {
+                    prev.find('a').removeAttr('href');
                     $('a[rel="prev"]').closest('li').addClass('disabled');
                 }
 
@@ -86,6 +87,7 @@ let paginateOrder = {
                     $('a[rel="next"]').closest('li').removeClass('disabled');
                     next.find('a').attr('href', clicked.next().find('a').attr('href'));
                 } else {
+                    next.find('a').removeAttr('href');
                     $('a[rel="next"]').closest('li').addClass('disabled');
                 }
             }
