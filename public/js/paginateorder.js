@@ -20,11 +20,11 @@ let paginateOrder = {
 
                     if (url.indexOf('manager') > 0) {
                         pagination.children().eq(1).empty()
-                            .html('<a class="page-link" href="'+window.location.protocol+ '//' + window.location.hostname+'/manager/task?page=1">1</a>');
+                            .html('<a class="page-link" href="'+window.location.href.split('?')[0]+'?page=1">1</a>');
                         activatePrev();
                     } else if (url.indexOf('developer') > 0) {
                         pagination.children().eq(1).empty()
-                            .html('<a class="page-link" href="'+window.location.protocol+ '//' + window.location.hostname+'/developer/task?page=1">1</a>');
+                            .html('<a class="page-link" href="'+window.location.href.split('?')[0]+'?page=1">1</a>');
                         activatePrev();
                     }
                 };
@@ -33,8 +33,8 @@ let paginateOrder = {
 
             if ($(event.target).closest('a').is('[rel]')) {
                 if ($(event.target).closest('a').is('[rel="next"]')) {
-                    let m = next.find('a').attr('href').replace(window.location.protocol + '//' + window.location.hostname + '/manager/task?page=', ''),
-                        d = next.find('a').attr('href').replace(window.location.protocol + '//' + window.location.hostname + '/developer/task?page=', '');
+                    let m = next.find('a').attr('href').replace(window.location.href.split('?')[0] + '?page=', ''),
+                        d = next.find('a').attr('href').replace(window.location.href.split('?')[0] + '?page=', '');
 
                     activatePrev();
                     activateOne();
@@ -43,20 +43,30 @@ let paginateOrder = {
                         if ($(value).find('a').text() === m || $(value).find('a').text() === d) {
                             $(value).addClass('active').attr('aria-current', 'page');
 
-                            next.find('a').attr('href', $(value).next().find('a').attr('href'));
                             prev.find('a').attr('href', $(value).prev().find('a').attr('href'));
+
+                            if ($(value).next().find('a').attr('rel') !== 'next') {
+                                next.find('a').attr('href', $(value).next().find('a').attr('href'));
+                            } else {
+                                $('a[rel="next"]').closest('li').addClass('disabled');
+                            }
                         }
                     });
 
                 } else if($(event.target).closest('a').is('[rel="prev"]')) {
-                    let f = prev.find('a').attr('href').replace(window.location.protocol + '//' + window.location.hostname + '/manager/task?page=', ''),
-                        l= prev.find('a').attr('href').replace(window.location.protocol + '//' + window.location.hostname + '/developer/task?page=', '');
+                    let f = prev.find('a').attr('href').replace(window.location.href.split('?')[0] + '?page=', ''),
+                        l= prev.find('a').attr('href').replace(window.location.href.split('?')[0] + '?page=', '');
 
                     $.each(li, (key, value) => {
                         if ($(value).find('a').text() === f || $(value).find('a').text() === l) {
                             $(value).addClass('active').attr('aria-current', 'page');
 
-                            prev.find('a').attr('href', $(value).prev().find('a').attr('href'));
+                            if ($(value).prev().find('a').attr('rel') !== 'prev') {
+                                prev.find('a').attr('href', $(value).prev().find('a').attr('href'));
+                            } else {
+                                $('a[rel="prev"]').closest('li').addClass('disabled');
+                            }
+                            $('a[rel="next"]').closest('li').removeClass('disabled');
                             next.find('a').attr('href', $(value).next().find('a').attr('href'));
                         }
                     });
@@ -65,8 +75,19 @@ let paginateOrder = {
                 activateOne();
 
                 clicked.addClass('active').attr('aria-current', 'page');
-                next.find('a').attr('href', clicked.next().find('a').attr('href'));
-                prev.find('a').attr('href', clicked.prev().find('a').attr('href'));
+
+                if (clicked.prev().find('a').attr('rel') !== 'prev') {
+                    prev.find('a').attr('href', clicked.prev().find('a').attr('href'));
+                } else {
+                    $('a[rel="prev"]').closest('li').addClass('disabled');
+                }
+
+                if (clicked.next().find('a').attr('rel') !== 'next') {
+                    $('a[rel="next"]').closest('li').removeClass('disabled');
+                    next.find('a').attr('href', clicked.next().find('a').attr('href'));
+                } else {
+                    $('a[rel="next"]').closest('li').addClass('disabled');
+                }
             }
 
             paginateOrder.getTasks(url, paginateOrder.what, paginateOrder.orderType);
