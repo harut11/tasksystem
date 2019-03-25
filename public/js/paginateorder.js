@@ -17,16 +17,9 @@ let paginateOrder = {
                         .html('<a class="page-link" href="" rel="prev">‹</a>');
                 },
                 activateOne = () => {
-
-                    if (url.indexOf('manager') > 0) {
-                        pagination.children().eq(1).empty()
-                            .html('<a class="page-link" href="'+window.location.href.split('?')[0]+'?page=1">1</a>');
-                        activatePrev();
-                    } else if (url.indexOf('developer') > 0) {
-                        pagination.children().eq(1).empty()
-                            .html('<a class="page-link" href="'+window.location.href.split('?')[0]+'?page=1">1</a>');
-                        activatePrev();
-                    }
+                    pagination.children().eq(1).empty()
+                        .html('<a class="page-link" href="'+window.location.href.split('?')[0]+'?page=1">1</a>');
+                    activatePrev();
                 };
 
             li.removeClass('active').removeAttr('aria-current');

@@ -11,20 +11,10 @@ class RoleSeeder extends Seeder
      */
     public function run()
     {
-        $records = [];
-
-        $roles = [
-            'manager',
-            'developer'
+        $records = [
+            ['name' => 'manager'],
+            ['name' => 'developer']
         ];
-
-        foreach ($roles as $key => $value) {
-            $record = [
-                'name' => $value,
-            ];
-
-            $records[] = $record;
-        }
 
         DB::table('roles')->insert($records);
     }
