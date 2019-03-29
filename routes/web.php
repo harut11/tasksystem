@@ -14,15 +14,15 @@
 
 Route::get('/', 'HomeController@index')->name('home');
 
-Route::group(['middleware' => 'manager', 'namespace' => 'manager', 'prefix' => 'manager', 'as' => 'manager.'], function () {
+Route::group(['middleware' => ['manager', 'verified'], 'namespace' => 'manager', 'prefix' => 'manager', 'as' => 'manager.'], function () {
     Route::get('searchuser', 'TaskController@searchuser')->name('searchuser');
     Route::resource('task', 'TaskController')->except(['searchuser']);
 });
 
-Route::group(['middleware' => 'developer', 'namespace' => 'developer', 'prefix' => 'developer', 'as' => 'developer.'], function () {
+Route::group(['middleware' => ['developer', 'verified'], 'namespace' => 'developer', 'prefix' => 'developer', 'as' => 'developer.'], function () {
     Route::resource('task', 'TaskController')->only(['index', 'edit', 'update', 'show']);
 });
 
 Route::get('/home', 'HomeController@index')->name('home');
 
-Auth::routes();
+Auth::routes(['verify' => true]);
